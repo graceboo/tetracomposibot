@@ -25,15 +25,15 @@ def plot_individual_and_average(all_scores, label, color):
     plt.plot(avg, color=color, label=label, linewidth=2)
     return avg
 
-# 📁 Dossiers contenant les résultats
+# Dossiers contenant les résultats
 random_folder = "random"
 genetic_folder = "genetic"
 
-# 📌 Chargement
+# Chargement
 random_scores = load_scores(random_folder, "results_random")
 genetic_scores = load_scores(genetic_folder, "results_genetic")
 
-# 📊 Tracé
+# Tracé
 plt.figure(figsize=(12, 6))
 plot_individual_and_average(random_scores, "Random Search (moyenne)", "blue")
 plot_individual_and_average(genetic_scores, "Genetic Algorithm (moyenne)", "green")
