@@ -6,13 +6,14 @@ debug = False
 
 class Robot_player(Robot):
 
-    team_name = "Optimizer"
+    team_name = "RandomSearch"
     robot_id = -1
     iteration = 0
 
     param = []
-    bestParam = [] 
-    it_per_evaluation = 400
+    bestParam = []
+    evaluations = 500   # nombre total de comportements à tester
+    it_per_evaluation = 400 # chaque comportement est testé pendant 400 itérations
     trial = 0
 
     x_0 = 0
@@ -29,6 +30,11 @@ class Robot_player(Robot):
         self.param = [random.randint(-1, 1) for i in range(8)]
         self.evaluations = evaluations
         self.it_per_evaluation = it_per_evaluation
+
+        # Modifié
+        self.best_score = -math.inf
+        self.bestParam = []
+        self.best_trial = 0
         super().__init__(x_0, y_0, theta_0, name=name, team=team)
 
     def reset(self):
@@ -42,17 +48,44 @@ class Robot_player(Robot):
         # - la fonction de controle est une combinaison linéaire des senseurs, pondérés par les paramètres (c'est un "Perceptron")
 
         # toutes les X itérations: le robot est remis à sa position initiale de l'arène avec une orientation aléatoire
-        if self.iteration % self.it_per_evaluation == 0:
-                if self.iteration > 0:
+
+        if self.iteration % self.it_per_evaluation == 0: # 
+                # Cela garatit  on rentre à la fin de la première évaluation 
+                if self.iteration > 0: 
                     print ("\tparameters           =",self.param)
                     print ("\ttranslations         =",self.log_sum_of_translation,"; rotations =",self.log_sum_of_rotation)
                     print ("\tdistance from origin =",math.sqrt((self.x-self.x_0)**2+(self.y-self.y_0)**2))
-                self.param = [random.randint(-1, 1) for i in range(8)]
+
+                    # Calcul du score
+                    score = self.log_sum_of_translation * (1 - abs(self.log_sum_of_rotation))
+
+                    # si le score obtenu pour cette itération est meilleur que la précédente
+                    if score > self.best_score:
+                        self.best_score = score     # on attribue le nouveau score
+                        self.bestParam = self.param.copy()  # et on garde les paramètres
+                        self.best_trial = self.trial    
+                        print("Nouveau meilleur score :", self.best_score)
+                        print("Paramètres :", self.bestParam)
+                
+                    # Si on n’a pas encore fini toutes les evaluations 
+                    if self.trial < self.evaluations:
+                        self.param = [random.randint(-1, 1) for i in range(8)] # on teste avec de nouveaux paramètres 
+                        self.trial = self.trial + 1
+                        print ("Trying strategy no.",self.trial)
+                        self.iteration = self.iteration + 1
+                        return 0, 0, True # ask for reset on passe à la suivante évaluation
+                    else:
+                        print("best evaluation : ", self.best_trial," de paramètres : ",self.bestParam)
+                        print("best_score ", self.best_score)
+                        self.param = self.bestParam
+                        print("Rejoue le meilleur comportement")
+                        return 0, 0, True
+                
                 self.trial = self.trial + 1
                 print ("Trying strategy no.",self.trial)
                 self.iteration = self.iteration + 1
                 return 0, 0, True # ask for reset
-
+    
         # fonction de contrôle (qui dépend des entrées sensorielles, et des paramètres)
         translation = math.tanh ( self.param[0] + self.param[1] * sensors[sensor_front_left] + self.param[2] * sensors[sensor_front] + self.param[3] * sensors[sensor_front_right] )
         rotation = math.tanh ( self.param[4] + self.param[5] * sensors[sensor_front_left] + self.param[6] * sensors[sensor_front] + self.param[7] * sensors[sensor_front_right] )

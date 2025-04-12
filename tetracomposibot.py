@@ -768,3 +768,4 @@ display_stats(retValues)
 
 if display_time_stats == True:
     print("[STOP] ", date.today(), datetime.now().strftime("%H:%M:%S"), "GMT")
+

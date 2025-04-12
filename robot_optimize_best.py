@@ -26,7 +26,7 @@ class Robot_player(Robot):
         self.x_0 = x_0
         self.y_0 = y_0
         self.theta_0 = theta_0
-        self.param = [random.randint(-1, 1) for i in range(8)]
+        self.param =  [1, 1, 0, 0, 0, -1, 0, 1]
         self.evaluations = evaluations
         self.it_per_evaluation = it_per_evaluation
         super().__init__(x_0, y_0, theta_0, name=name, team=team)
@@ -47,7 +47,7 @@ class Robot_player(Robot):
                     print ("\tparameters           =",self.param)
                     print ("\ttranslations         =",self.log_sum_of_translation,"; rotations =",self.log_sum_of_rotation)
                     print ("\tdistance from origin =",math.sqrt((self.x-self.x_0)**2+(self.y-self.y_0)**2))
-                self.param = [random.randint(-1, 1) for i in range(8)]
+                self.param =  [1, 1, 0, 0, 0, -1, 0, 1]
                 self.trial = self.trial + 1
                 print ("Trying strategy no.",self.trial)
                 self.iteration = self.iteration + 1
