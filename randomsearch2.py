@@ -61,7 +61,7 @@ class Robot_player(Robot):
 
                     else:
                         print(f" Score total = {self.total_score}")
-                        with open("results_random10.txt", "a") as f:
+                        with open("random/results_random10.txt", "a") as f:
                             f.write(f"{self.trial}, {self.total_score}, {self.best_score}\n")
 
                         if self.total_score > self.best_score:
